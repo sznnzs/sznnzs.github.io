@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>blog test</title>
+    <url>/2020/12/07/hello-world/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>cate1</category>
+      </categories>
+      <tags>
+        <tag>tag1</tag>
+        <tag>tag2</tag>
+      </tags>
+  </entry>
+</search>
