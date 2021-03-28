@@ -2,9 +2,22 @@
 <search>
   <entry>
     <title>CSP认证题目</title>
-    <url>/2021/03/28/hello-world/</url>
-    <content><![CDATA[<h2 id="第21次CSP认证"><a href="#第21次CSP认证" class="headerlink" title="第21次CSP认证"></a>第21次CSP认证</h2><h4 id="T1"><a href="#T1" class="headerlink" title="T1"></a>T1</h4><p>实现RELU函数，乘积的累加再与0取最大值</p>
-<h4 id="T2"><a href="#T2" class="headerlink" title="T2"></a>T2</h4>]]></content>
+    <url>/2021/03/28/CSP%E8%AE%A4%E8%AF%81/</url>
+    <content><![CDATA[<h2 id="第21次CSP认证"><a href="#第21次CSP认证" class="headerlink" title="第21次CSP认证"></a>第21次CSP认证</h2><p>包括全部21次CSP认证题目</p>
+<a id="more"></a>
+
+<h4 id="一些想法"><a href="#一些想法" class="headerlink" title="一些想法"></a>一些想法</h4><ul>
+<li><p>模拟题，计算几何，数据结构难写难调</p>
+</li>
+<li><p>根据数据范围考虑算法复杂度进而考虑算法</p>
+</li>
+</ul>
+<h4 id="T1"><a href="#T1" class="headerlink" title="T1"></a>T1</h4><p>简单公式计算：实现RELU函数，乘积累加再与0取最大值</p>
+<h4 id="T2"><a href="#T2" class="headerlink" title="T2"></a>T2</h4><p>排序+前缀和</p>
+<p>每次在数组中根据一个数值，想要得到比它大和比它小的两个集合的某种信息，而这个数值需要遍历整个数组，这种情况下排序往往是首要的有效策略</p>
+<p>可以借助PII方便sort，第一关键字优先</p>
+<p>对于排序后数值相同的元素，只取每组里的第一个进行计算，后面重复的需要跳过</p>
+<h4 id="T3"><a href="#T3" class="headerlink" title="T3"></a>T3</h4>]]></content>
       <categories>
         <category>CSP认证</category>
       </categories>
