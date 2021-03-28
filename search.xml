@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>blog test</title>
-    <url>/2020/12/07/hello-world/</url>
-    <content><![CDATA[]]></content>
+    <title>CSP认证题目</title>
+    <url>/2021/03/28/hello-world/</url>
+    <content><![CDATA[<h2 id="第21次CSP认证"><a href="#第21次CSP认证" class="headerlink" title="第21次CSP认证"></a>第21次CSP认证</h2><h4 id="T1"><a href="#T1" class="headerlink" title="T1"></a>T1</h4><p>实现RELU函数，乘积的累加再与0取最大值</p>
+<h4 id="T2"><a href="#T2" class="headerlink" title="T2"></a>T2</h4>]]></content>
       <categories>
-        <category>cate1</category>
+        <category>CSP认证</category>
       </categories>
       <tags>
         <tag>tag1</tag>
