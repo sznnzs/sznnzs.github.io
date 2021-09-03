@@ -1,29 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CSP认证题目</title>
-    <url>/2021/03/28/CSP%E8%AE%A4%E8%AF%81/</url>
-    <content><![CDATA[<h2 id="第21次CSP认证"><a href="#第21次CSP认证" class="headerlink" title="第21次CSP认证"></a>第21次CSP认证</h2><p>包括全部21次CSP认证题目</p>
+    <title>bert-adapter初步分析</title>
+    <url>/2021/09/03/adapter-bert_v0/</url>
+    <content><![CDATA[<p>从bert与bert-adapter异同分析入手</p>
 <a id="more"></a>
 
-<h4 id="一些想法"><a href="#一些想法" class="headerlink" title="一些想法"></a>一些想法</h4><ul>
-<li><p>模拟题，计算几何，数据结构难写难调</p>
+<p>tokenization.py中二者代码完全一致，没有任何区别（逐字符相同）</p>
+<hr>
+<p>run_classifier.py二者有细微区别</p>
+<ol>
+<li><p>bert中的<code>class XnliProcessor(DataProcessor):</code>在adapter-bert中被删除</p>
 </li>
-<li><p>根据数据范围考虑算法复杂度进而考虑算法</p>
+<li><p>bert的第593，596行中的output_weights，output_bias</p>
+<p>其中的tf.get_variable函数添加了参数<code>collections=[&quot;head&quot;, tf.GraphKeys.GLOBAL_VARIABLES]</code></p>
 </li>
-</ul>
-<h4 id="T1"><a href="#T1" class="headerlink" title="T1"></a>T1</h4><p>简单公式计算：实现RELU函数，乘积累加再与0取最大值</p>
-<h4 id="T2"><a href="#T2" class="headerlink" title="T2"></a>T2</h4><p>排序+前缀和</p>
-<p>每次在数组中根据一个数值，想要得到比它大和比它小的两个集合的某种信息，而这个数值需要遍历整个数组，这种情况下排序往往是首要的有效策略</p>
-<p>可以借助PII方便sort，第一关键字优先</p>
-<p>对于排序后数值相同的元素，只取每组里的第一个进行计算，后面重复的需要跳过</p>
-<h4 id="T3"><a href="#T3" class="headerlink" title="T3"></a>T3</h4>]]></content>
+<li><p>bert的787行<code>&quot;xnli&quot;: XnliProcessor,</code>在adapter-bert中被删除</p>
+</li>
+</ol>
+<hr>
+<p>optimization.py中二者有较小区别，主要为设置需要更新的参数仅仅为adapter层</p>
+<ol>
+<li><p>在AdamWeightDecayOptimizer中添加了<code>adapter_weight_decay_rate=0.01</code>的参数</p>
+<p>adapter-bert中的62，96，107行</p>
+</li>
+<li><p>bert的70行定义了整个模型需要被训练的参数原先为 <code>tvars = tf.trainable_variables()</code></p>
+<p>在adapter-bert中改成了：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tvars = []</span><br><span class="line"><span class="keyword">for</span> collection <span class="keyword">in</span> [<span class="string">&quot;adapters&quot;</span>, <span class="string">&quot;layer_norm&quot;</span>, <span class="string">&quot;head&quot;</span>]:</span><br><span class="line">  tvars += tf.get_collection(collection)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>adapter-bert中112行添加了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self._adapter_variable_names = &#123;</span><br><span class="line">    self._get_variable_name(v.name) <span class="keyword">for</span> v <span class="keyword">in</span> tf.get_collection(<span class="string">&quot;adapters&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>adapter-bert中155行，原先的bert为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> self._do_use_weight_decay(param_name):</span><br><span class="line">  update += self.weight_decay_rate * param</span><br></pre></td></tr></table></figure>
+
+<p>adapter-bert中为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> self._do_use_weight_decay(param_name):</span><br><span class="line">  <span class="keyword">if</span> param_name <span class="keyword">in</span> self._adapter_variable_names:</span><br><span class="line">    update += self.adapter_weight_decay_rate * param</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    update += self.weight_decay_rate * param</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后一处不同就是定义<code>def _do_use_weight_decay(self, param_name):</code>这个函数了，用来判断参数是否需要更新：</p>
+<p>bert中为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_do_use_weight_decay</span>(<span class="params">self, param_name</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;Whether to use L2 weight decay for `param_name`.&quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> self.weight_decay_rate:</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">if</span> self.exclude_from_weight_decay:</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> self.exclude_from_weight_decay:</span><br><span class="line">      <span class="keyword">if</span> re.search(r, param_name) <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>而在adapter-bert中为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_do_use_weight_decay</span>(<span class="params">self, param_name</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;Whether to use L2 weight decay for `param_name`.&quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">if</span> param_name <span class="keyword">in</span> self._adapter_variable_names:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.adapter_weight_decay_rate:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.weight_decay_rate:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">   </span><br><span class="line">  <span class="keyword">if</span> self.exclude_from_weight_decay:</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> self.exclude_from_weight_decay:</span><br><span class="line">      <span class="keyword">if</span> re.search(r, param_name) <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">   </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+]]></content>
       <categories>
-        <category>CSP认证</category>
+        <category>nlp_bert</category>
       </categories>
       <tags>
-        <tag>tag1</tag>
-        <tag>tag2</tag>
+        <tag>NLP</tag>
+        <tag>预训练模型</tag>
       </tags>
   </entry>
 </search>

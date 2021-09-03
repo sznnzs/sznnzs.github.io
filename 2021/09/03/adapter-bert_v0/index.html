@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="tag1,tag2," />
+  <meta name="keywords" content="NLP,预训练模型," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="第21次CSP认证包括全部21次CSP认证题目">
+<meta name="description" content="从bert与bert-adapter异同分析入手">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CSP认证题目">
-<meta property="og:url" content="http://example.com/2021/03/28/CSP%E8%AE%A4%E8%AF%81/index.html">
+<meta property="og:title" content="bert-adapter初步分析">
+<meta property="og:url" content="http://example.com/2021/09/03/adapter-bert_v0/index.html">
 <meta property="og:site_name" content="szn_blog">
-<meta property="og:description" content="第21次CSP认证包括全部21次CSP认证题目">
+<meta property="og:description" content="从bert与bert-adapter异同分析入手">
 <meta property="og:locale">
-<meta property="article:published_time" content="2021-03-27T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-03-28T02:00:57.300Z">
+<meta property="article:published_time" content="2021-09-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-02T16:00:00.000Z">
 <meta property="article:author" content="szn">
-<meta property="article:tag" content="tag1">
-<meta property="article:tag" content="tag2">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="预训练模型">
 <meta name="twitter:card" content="summary">
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/2021/03/28/CSP认证/"/>
+  <link rel="canonical" href="http://example.com/2021/09/03/adapter-bert_v0/"/>
 
 
 
 
 
-  <title>CSP认证题目 | szn_blog</title>
+  <title>bert-adapter初步分析 | szn_blog</title>
   
 
 
@@ -298,7 +298,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/28/CSP%E8%AE%A4%E8%AF%81/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/03/adapter-bert_v0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -315,7 +315,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">CSP认证题目</h1>
+          <h1 class="post-title" itemprop="name headline">bert-adapter初步分析</h1>
         
 
         <div class="post-meta">
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-28T00:00:00+08:00">
-                2021-03-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-03T00:00:00+08:00">
+                2021-09-03
               </time>
             
 
@@ -350,8 +350,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSP%E8%AE%A4%E8%AF%81/" itemprop="url" rel="index">
-                    <span itemprop="name">CSP认证</span>
+                  <a href="/categories/nlp-bert/" itemprop="url" rel="index">
+                    <span itemprop="name">nlp_bert</span>
                   </a>
                 </span>
 
@@ -387,21 +387,50 @@
       
 
       
-        <h2 id="第21次CSP认证"><a href="#第21次CSP认证" class="headerlink" title="第21次CSP认证"></a>第21次CSP认证</h2><p>包括全部21次CSP认证题目</p>
+        <p>从bert与bert-adapter异同分析入手</p>
 <a id="more"></a>
 
-<h4 id="一些想法"><a href="#一些想法" class="headerlink" title="一些想法"></a>一些想法</h4><ul>
-<li><p>模拟题，计算几何，数据结构难写难调</p>
+<p>tokenization.py中二者代码完全一致，没有任何区别（逐字符相同）</p>
+<hr>
+<p>run_classifier.py二者有细微区别</p>
+<ol>
+<li><p>bert中的<code>class XnliProcessor(DataProcessor):</code>在adapter-bert中被删除</p>
 </li>
-<li><p>根据数据范围考虑算法复杂度进而考虑算法</p>
+<li><p>bert的第593，596行中的output_weights，output_bias</p>
+<p>其中的tf.get_variable函数添加了参数<code>collections=[&quot;head&quot;, tf.GraphKeys.GLOBAL_VARIABLES]</code></p>
 </li>
-</ul>
-<h4 id="T1"><a href="#T1" class="headerlink" title="T1"></a>T1</h4><p>简单公式计算：实现RELU函数，乘积累加再与0取最大值</p>
-<h4 id="T2"><a href="#T2" class="headerlink" title="T2"></a>T2</h4><p>排序+前缀和</p>
-<p>每次在数组中根据一个数值，想要得到比它大和比它小的两个集合的某种信息，而这个数值需要遍历整个数组，这种情况下排序往往是首要的有效策略</p>
-<p>可以借助PII方便sort，第一关键字优先</p>
-<p>对于排序后数值相同的元素，只取每组里的第一个进行计算，后面重复的需要跳过</p>
-<h4 id="T3"><a href="#T3" class="headerlink" title="T3"></a>T3</h4>
+<li><p>bert的787行<code>&quot;xnli&quot;: XnliProcessor,</code>在adapter-bert中被删除</p>
+</li>
+</ol>
+<hr>
+<p>optimization.py中二者有较小区别，主要为设置需要更新的参数仅仅为adapter层</p>
+<ol>
+<li><p>在AdamWeightDecayOptimizer中添加了<code>adapter_weight_decay_rate=0.01</code>的参数</p>
+<p>adapter-bert中的62，96，107行</p>
+</li>
+<li><p>bert的70行定义了整个模型需要被训练的参数原先为 <code>tvars = tf.trainable_variables()</code></p>
+<p>在adapter-bert中改成了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tvars = []</span><br><span class="line"><span class="keyword">for</span> collection <span class="keyword">in</span> [<span class="string">&quot;adapters&quot;</span>, <span class="string">&quot;layer_norm&quot;</span>, <span class="string">&quot;head&quot;</span>]:</span><br><span class="line">  tvars += tf.get_collection(collection)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>adapter-bert中112行添加了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self._adapter_variable_names = &#123;</span><br><span class="line">    self._get_variable_name(v.name) <span class="keyword">for</span> v <span class="keyword">in</span> tf.get_collection(<span class="string">&quot;adapters&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>adapter-bert中155行，原先的bert为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> self._do_use_weight_decay(param_name):</span><br><span class="line">  update += self.weight_decay_rate * param</span><br></pre></td></tr></table></figure>
+
+<p>adapter-bert中为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> self._do_use_weight_decay(param_name):</span><br><span class="line">  <span class="keyword">if</span> param_name <span class="keyword">in</span> self._adapter_variable_names:</span><br><span class="line">    update += self.adapter_weight_decay_rate * param</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    update += self.weight_decay_rate * param</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后一处不同就是定义<code>def _do_use_weight_decay(self, param_name):</code>这个函数了，用来判断参数是否需要更新：</p>
+<p>bert中为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_do_use_weight_decay</span>(<span class="params">self, param_name</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;Whether to use L2 weight decay for `param_name`.&quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> self.weight_decay_rate:</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">if</span> self.exclude_from_weight_decay:</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> self.exclude_from_weight_decay:</span><br><span class="line">      <span class="keyword">if</span> re.search(r, param_name) <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>而在adapter-bert中为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_do_use_weight_decay</span>(<span class="params">self, param_name</span>):</span></span><br><span class="line">  <span class="string">&quot;&quot;&quot;Whether to use L2 weight decay for `param_name`.&quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">if</span> param_name <span class="keyword">in</span> self._adapter_variable_names:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.adapter_weight_decay_rate:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.weight_decay_rate:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">   </span><br><span class="line">  <span class="keyword">if</span> self.exclude_from_weight_decay:</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> self.exclude_from_weight_decay:</span><br><span class="line">      <span class="keyword">if</span> re.search(r, param_name) <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">   </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+
       
     </div>
     
@@ -418,9 +447,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/tag1/" rel="tag"># tag1</a>
+            <a href="/tags/NLP/" rel="tag"># NLP</a>
           
-            <a href="/tags/tag2/" rel="tag"># tag2</a>
+            <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" rel="tag"># 预训练模型</a>
           
         </div>
       
@@ -477,17 +506,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -523,7 +543,7 @@
               
               
               <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
+                <a href="/%E6%9C%AA%E5%85%AC%E5%BC%80%E7%9A%84posts/CSP%E8%AE%A4%E8%AF%81.html">
                   <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
@@ -547,22 +567,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC21%E6%AC%A1CSP%E8%AE%A4%E8%AF%81"><span class="nav-number">1.</span> <span class="nav-text">第21次CSP认证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95"><span class="nav-number">1.0.1.</span> <span class="nav-text">一些想法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#T1"><span class="nav-number">1.0.2.</span> <span class="nav-text">T1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#T2"><span class="nav-number">1.0.3.</span> <span class="nav-text">T2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#T3"><span class="nav-number">1.0.4.</span> <span class="nav-text">T3</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
