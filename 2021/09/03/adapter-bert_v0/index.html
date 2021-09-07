@@ -398,10 +398,15 @@
 </li>
 <li><p>bert的第593，596行中的output_weights，output_bias</p>
 <p>其中的tf.get_variable函数添加了参数<code>collections=[&quot;head&quot;, tf.GraphKeys.GLOBAL_VARIABLES]</code></p>
+<p>在这里定义的这些参数是独立于预训练模型的，是classifier下游任务中添加的最顶端的分类层</p>
+<p>因此被添加的全局collections名字为head</p>
 </li>
 <li><p>bert的787行<code>&quot;xnli&quot;: XnliProcessor,</code>在adapter-bert中被删除</p>
 </li>
 </ol>
+<ul>
+<li>在这个部分，XnliProcessor的删除是完全没有任何影响的，因为这个类：Found 0 references in 0 files</li>
+</ul>
 <hr>
 <p>optimization.py中二者有较小区别，主要为设置需要更新的参数仅仅为adapter层</p>
 <ol>
@@ -573,7 +578,7 @@
               
               
               <div class="site-state-item site-state-tags">
-                <a href="/%E6%9C%AA%E5%85%AC%E5%BC%80%E7%9A%84posts/CSP%E8%AE%A4%E8%AF%81.html">
+                <a href="/tags/index.html">
                   <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
